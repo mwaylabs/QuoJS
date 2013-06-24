@@ -29,6 +29,10 @@ do ($$ = Quo) ->
         environment.bind "touchmove", _onTouchMove
         environment.bind "touchend", _onTouchEnd
         environment.bind "touchcancel", _cleanGesture
+        if $$ and $$.environment() and $$.environment().os and $$.environment().os.name is 'Android'
+          environment.bind "touchstart", ((e) ->
+              e.preventDefault()
+          ), false
 
     _onTouchStart = (event) ->
         EVENT = event
@@ -48,7 +52,7 @@ do ($$ = Quo) ->
 
         if fingers is 1
             if fingers >= 1
-              GESTURE.gap = (delta > 0 and delta <= 250)
+              GESTURE.gap = (delta > 0 and delta <= 300)
             setTimeout _hold, HOLD_DELAY
         else if fingers is 2
             GESTURE.initial_angle = parseInt(_angle(FIRST_TOUCH), 10)
@@ -102,7 +106,7 @@ do ($$ = Quo) ->
                     TOUCH_TIMEOUT = setTimeout((->
                         _trigger "singleTap"
                         _cleanGesture()
-                    ), 100)
+                    ), 250)
         else
             anyevent = false
             if GESTURE.angle_difference isnt 0
